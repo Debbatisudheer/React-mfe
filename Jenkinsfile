@@ -1,32 +1,23 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs "nodejs-18"   // name you configured in Jenkins
-    }
-
     stages {
-        stage('Pull from GitHub') {
+
+        stage('Pull Latest Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/Debbatisudheer/React-mfe.git'
             }
         }
 
-        stage('Install dependencies') {
+        stage('Build Docker Images') {
             steps {
-                sh 'cd shell-app && npm install'
-                sh 'cd menu-app && npm install'
-                sh 'cd cart-app && npm install'
-                sh 'cd login-app && npm install'
+                sh 'docker compose build'
             }
         }
 
-        stage('Build apps') {
+        stage('Run Containers') {
             steps {
-                sh 'cd shell-app && npm run build'
-                sh 'cd menu-app && npm run build'
-                sh 'cd cart-app && npm run build'
-                sh 'cd login-app && npm run build'
+                sh 'docker compose up -d'
             }
         }
     }
